@@ -15,6 +15,7 @@ jobs:
       run: echo "::set-output name=option::THIS_ACTUALLY_WORKS"
 
     - name: New method
+      shell: bash
       id: new_method
       run: echo "option=THIS_NO_LONGER_WORKS" >> $GITHUB_OUTPUT
 
