@@ -1,0 +1,37 @@
+name: MinGW
+
+on: push
+
+env:
+  WDK_URL: https://go.microsoft.com/fwlink/p/?LinkID=253170
+  LIBUSB0_URL: https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/libusb-win32-bin-1.2.6.0.zip/download
+  LIBUSBK_URL: https://github.com/mcuee/libusbk/releases/download/V3.1.0.0/libusbK-3.1.0.0-bin.7z
+
+jobs:
+  MinGW-Build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        include:
+          - { sys: mingw64, env: x86_64 }
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Install MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.sys }}
+        update: true
+        install: mingw-w64-${{ matrix.env }}-toolchain
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Download support files
+      shell: cmd
+      run: |
+        curl -L ${{ env.WDK_URL }} -o wdk-redist.msi
+        curl -L ${{ env.LIBUSB0_URL }} -o libusb0-redist.zip
+        curl -L ${{ env.LIBUSBK_URL }} -o libusbk-redist.7z
